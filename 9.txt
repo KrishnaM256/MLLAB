@@ -1,0 +1,71 @@
+# 9. Write a program to do the following: You have given a collection of 8
+# points. P1=[0.1,0.6] P2=[0.15,0.71] P3=[0.08,0.9] P4=[0.16, 0.85]
+# P5=[0.2,0.3] P6=[0.25,0.5] P7=[0.24,0.1] P8=[0.3,0.2]. Perform the k-mean
+# clustering with initial centroids as m1=P1 =Cluster#1=C1 and
+# m2=P8=cluster#2=C2. Answer the following 1] Which cluster does P6
+# belong to? 2] What is the population of a cluster around m2? 3] What is
+# the updated value of m1 and m2?
+
+import numpy as np
+import math
+
+points = np.array([
+    [0.1,0.6],
+    [0.15,0.71],
+    [0.08,0.9],
+    [0.16, 0.85],
+    [0.2,0.3],
+    [0.25,0.5],
+    [0.24,0.1],
+    [0.3,0.2]
+])
+
+m1 = points[0]
+m2 = points[7]
+
+def euclidean_dist(centroid,point):
+    return np.sqrt(np.sum(point-centroid)**2)
+
+def k_mean(points,m1,m2,max_iterations=10):
+    for iteration in range(max_iterations):
+        clusters={1:[],2:[]}
+        for point in points:
+            dist1 = euclidean_dist(m1,point)
+            dist2 = euclidean_dist(m2,point)
+            if(dist1<dist2):
+                clusters[1].append(point)
+            else:
+                clusters[2].append(point)
+        
+        new_m1 = np.mean(clusters[1]) if clusters[1] else m1
+        new_m2 = np.mean(clusters[2]) if clusters[2] else m1
+
+        if(np.allclose(m1,new_m1) and np.allclose(m2,new_m2)):
+            break
+        m1,m2 = new_m1,new_m2
+
+        return clusters,m1,m2
+    
+clusters,updated_m1,updated_m2 = k_mean(points,m1,m2,10)
+
+p6_cluster = None
+p6 = points[5]
+
+for clusters_id,clusters_values in clusters.items():
+    for point in clusters_values:
+        if np.array_equal(p6,point):
+            p6_cluster = clusters_id
+            break
+        if p6_cluster: 
+            break
+
+
+# Question 2: What is the population of the cluster around m3?
+print(f"1] P6 belongs to Cluster: {p6_cluster}")
+# Question 3: What are the updated values of m1, m2, m3?
+print(f"3] Updated values:\n   m1: {updated_m1}\n   m2: {updated_m2}\n   ")
+
+
+
+
+

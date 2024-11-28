@@ -1,0 +1,76 @@
+# 25. Perform Data Cleaning, Data transformation using Python on any data set.
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder,MinMaxScaler
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+df = pd.read_csv('C:/Users/DELL/DSML_PRACTICAL/Datasets/Titanic.csv')
+
+print(df.head())
+
+print(df.describe())
+print(df.info())
+
+# Handle Missing values
+df['Age']=df['Age'].fillna(df['Age'].median())
+df['Fare']=df['Fare'].fillna(df['Fare'].mean())
+df = df.drop(columns=['Cabin'])
+
+print(df.info())
+
+# Encode categorical variables
+le = LabelEncoder()
+
+df['Sex'] = le.fit_transform(df['Sex'])
+df['Embarked'] = le.fit_transform(df['Embarked'])
+
+# Create new attribute
+df['FamilySize'] = df['Parch']+df['SibSp']+1
+
+# Normalize Age and Fare
+scaler = MinMaxScaler()
+print(df[['Age','Fare']].head())
+
+df[['Age','Fare']] =  scaler.fit_transform(df[['Age','Fare']])
+
+print(df[['Age','Fare']].head())
+
+# Deal with outliers
+sns.boxplot(x='Age',data=df)
+
+plt.show()
+
+sns.boxplot(x='Fare',data=df)
+
+plt.show()
+
+q1_age = df['Age'].quantile(0.25)
+q3_age = df['Age'].quantile(0.75)
+
+IQR_age = q3_age-q1_age
+
+lower_bound_age = q1_age - 1.5*IQR_age
+upper_bound_age = q3_age + 1.5*IQR_age
+
+df['Age'] = np.clip(df['Age'],lower_bound_age,upper_bound_age)
+
+sns.boxplot(x='Age',data=df)
+
+plt.show()
+
+
+q1_fare = df['Fare'].quantile(0.25)
+q3_fare = df['Fare'].quantile(0.75)
+
+IQR_age = q3_fare-q1_fare
+
+lower_bound_fare = q1_fare - 1.5*IQR_age
+upper_bound_fare = q3_fare + 1.5*IQR_age
+
+df['Fare'] = np.clip(df['Fare'],lower_bound_fare,upper_bound_fare)
+
+sns.boxplot(x='Fare',data=df)
+
+plt.show()

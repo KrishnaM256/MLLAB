@@ -1,0 +1,22 @@
+# 18. Use House_Price prediction dataset. Provide summary statistics (mean,
+# median, minimum, maximum, standard deviation) of variables (categorical
+# vs quantitative) such as- For example, if categorical variable is age groups
+# and quantitative variable is income, then provide summary statistics of
+# income grouped by the age groups.
+
+import pandas as pd
+
+data = pd.read_csv('C:/Users/DELL/DSML_PRACTICAL/Datasets/House Data.csv')
+
+# Clean the data: convert 'price' and 'GrossSquareMeters' to numeric
+data['price'] = data['price'].str.replace('[^0-9]', '', regex=True).astype(float)
+data['GrossSquareMeters'] = data['GrossSquareMeters'].str.replace('[^0-9]', '', regex=True).astype(float)
+
+# Define categorical and quantitative variables
+categorical_var = 'BuildingAge'  # Example categorical variable
+quantitative_vars = ['price', 'GrossSquareMeters']  # Example quantitative variables
+
+# Group by the categorical variable and compute summary statistics
+summary_stats = data.groupby(categorical_var)[quantitative_vars].agg(['mean', 'median', 'min', 'max', 'std'])
+
+print(summary_stats)
